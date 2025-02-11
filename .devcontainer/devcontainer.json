@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
@@ -57,3 +58,61 @@
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
 }
+=======
+{
+	"name": "Miniforge3",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "condaforge/miniforge3:24.3.0-0",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"github.vscode-github-actions",
+				"ms-vscode-remote.remote-containers",
+				"redhat.vscode-yaml",
+				"ms-azuretools.vscode-docker",
+				"ms-vscode-remote.remote-wsl",
+				"ms-vscode.remote-explorer",
+				"ms-vscode-remote.vscode-remote-extensionpack",
+				"ms-vscode.remote-server",
+				"ms-vscode-remote.remote-ssh-edit",
+				"ms-vscode-remote.remote-ssh",
+				"ms-toolsai.jupyter-keymap",
+				"mechatroner.rainbow-csv",
+				"mtxr.sqltools",
+				"donjayamanne.python-environment-manager",
+				"ms-python.debugpy",
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"magicstack.MagicPython",
+				"ms-vsliveshare.vsliveshare",
+				"ms-toolsai.jupyter-renderers",
+				"ms-toolsai.vscode-jupyter-cell-tags",
+				"ms-toolsai.jupyter",
+				"VisualStudioExptTeam.intellicode-api-usage-examples",
+				"streetsidesoftware.code-spell-checker",
+				"uva-school-of-data-science.sds-vscode",
+				"GitHub.copilot-chat",
+				"GitHub.copilot",
+				"GitHub.codespaces"
+			]
+		}
+	},
+	 "postCreateCommand": "pip3 install -r requirements.txt"
+
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "pip3 install --user -r requirements.txt",
+
+	// Configure tool-specific properties.
+	// "customizations": {},
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
+>>>>>>> upstream/main

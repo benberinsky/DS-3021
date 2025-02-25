@@ -60,9 +60,9 @@
 }
 =======
 {
-	"name": "Miniforge3",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "condaforge/miniforge3:24.3.0-0",
+	"name": "Python 3",
+	// Or use a Dockerfile or 
+	"image": "mcr.microsoft.com/devcontainers/python:1-3.12-bullseye",
 	"customizations": {
 		"vscode": {
 			"extensions": [

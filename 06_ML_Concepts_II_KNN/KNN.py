@@ -15,7 +15,6 @@ import random
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from sklearn.metrics import classification_report
 from sklearn import metrics
-from plot_metric.functions import BinaryClassification #need to pip install plot metric
 
 #%%
 # -------- Data prep --------
@@ -113,11 +112,7 @@ print(bank_data['signed up_1'].value_counts()[1] / bank_data['signed up_1'].coun
 # This means that at random, we have an 11.6% chance of correctly picking a subscribed individual. Let's see if kNN can do any better.
 
 #%%
-"""
-X = bank_data.drop(['signed up_1'], axis=1).values   # independent variables
-y = bank_data['signed up_1'].values                  # dependent variable
-"""
-
+               # dependent variable
 train, test = train_test_split(bank_data,  test_size=0.4, stratify = bank_data['signed up_1']) 
 test, val = train_test_split(test, test_size=0.5, stratify=test['signed up_1'])
 
@@ -126,16 +121,24 @@ test, val = train_test_split(test, test_size=0.5, stratify=test['signed up_1'])
 import random
 random.seed(1984)   # kNN is a random algorithm, so we use `random.seed(x)` to make results repeatable
 
-X_train = train.drop(['signed up_1'], axis=1).values
+X_train = train.drop(['signed up_1','signed up_0'], axis=1)
 y_train = train['signed up_1'].values
 
 neigh = KNeighborsClassifier(n_neighbors=9)
 neigh.fit(X_train, y_train)
 
+# Measure accuracy on the training data
+X_train = train.drop(['signed up_1'], axis=1)
+y_train = train['signed up_1'].values
+
+#%%
+#train_accuracy = neigh.score(X_train, y_train)
+#print(f"Training Accuracy: {train_accuracy}")
+
 #%%
 # now, we check the model's accuracy on the test data:
 
-X_val = val.drop(['signed up_1'], axis=1).values
+X_val = val.drop(['signed up_1'], axis=1)
 y_val = val['signed up_1'].values
 
 print(neigh.score(X_val, y_val))
@@ -147,7 +150,6 @@ X_test = test.drop(['signed up_1'], axis=1).values
 y_test = test['signed up_1'].values
 
 print(neigh.score(X_test, y_test))
-
 #%%
 # -------- Evaluate model --------
 # A 99.0% accuracy rate is pretty good but keep in mind the baserate is roughly 89/11, so we have more or less a 90% chance of 
@@ -200,6 +202,14 @@ test = pd.DataFrame({'k':list(range(1,22,2)),
 
 #%%
 print(test.head())
+
+#%%
+# Check for features that perfectly predict the 'signed up' variable
+#for column in bank_data.columns:
+#    if column != 'signed up_1':
+#        crosstab = pd.crosstab(bank_data[column], bank_data['signed up_1'])
+#        if crosstab.max().max() == crosstab.sum().max():
+#            print(f"Feature '{column}' perfectly predicts the 'signed up' variable.")
 
 #%%
 test = test.sort_values(by=['accu'], ascending=False)
@@ -298,30 +308,11 @@ plt.legend(loc=4)
 plt.show()
 
 #%%
-# The second:
-# run `pip install plot_metric` in your terminal
-
-from plot_metric.functions import BinaryClassification
-
-# Visualisation with plot_metric
-bc = BinaryClassification(y_test, final_model.pred_class, labels=["0", "1"])
-
-# Figures
-plt.figure(figsize=(5,5))
-bc.plot_roc_curve()
-plt.show()
-
-#%%
 # ----- F1 Score -----
 print(metrics.f1_score(y_test, final_model.pred_class))
 #%%
 # ----- Log Loss -----
 print(metrics.log_loss(y_test, final_model.pred_class))
-
-
-
-
-
 
 #%%
 # -------- Another quick example! --------
@@ -352,6 +343,7 @@ Xi_val = irisVal.drop(['Species'], axis=1)
 yi_val = irisVal['Species']
 
 #%%
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 # construct classifier
 iris_neigh = KNeighborsClassifier(n_neighbors=3)
 iris_neigh.fit(Xi_train, yi_train)
@@ -361,7 +353,11 @@ iris_neigh.fit(Xi_train, yi_train)
 print(iris_neigh.score(Xi_test, yi_test))
 print(iris_neigh.score(Xi_val, yi_val))
 
-plot_confusion_matrix(iris_neigh, Xi_val, yi_val, cmap='Blues')  
+#%%
+y_pred = iris_neigh.predict(Xi_test)
+cm = confusion_matrix(yi_test, y_pred)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=iris_neigh.classes_)
+disp.plot()
 plt.show()
 
 #%%
@@ -438,7 +434,7 @@ fin_knn = KNeighborsClassifier(n_neighbors=7)
 fin_knn.fit(Xsi_train, ysi_train)
 
 print(fin_knn.score(Xsi_test, ysi_test))
-plot_confusion_matrix(fin_knn, Xsi_test, ysi_test, cmap='Blues')  
+
 #%%
 # 1. Change `Sepal.Length`
 perm_SL = Xsi_test.copy()   # copy df; we don't want to alter the actual data
@@ -476,8 +472,6 @@ plot_confusion_matrix(fin_knn, Xsi_test, ysi_test, cmap='Blues')
 # Looks like we only misclassified one virginica as versicolor. Let's see how certain our predictions were.
 iris2_probs = fin_knn.predict_proba(Xsi_test)
 print(iris2_probs)
-
-
 
 #%%
 newlist = [x for x in range(10)] 

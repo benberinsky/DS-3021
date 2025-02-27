@@ -116,12 +116,40 @@ print(bank_data['signed up_1'].value_counts()[1] / bank_data['signed up_1'].coun
 train, test = train_test_split(bank_data,  test_size=0.4, stratify = bank_data['signed up_1']) 
 test, val = train_test_split(test, test_size=0.5, stratify=test['signed up_1'])
 
+# %%
+def clean_and_split_data(df, target, test_size=0.4, val_size=0.5, random_state=1984):
+    # Collapse 'job' levels
+    employed = ['admin', 'blue-collar', 'entrepreneur', 'housemaid', 'management',
+                'self-employed', 'services', 'technician']
+    df.iloc[:, df.columns.get_loc('job')] = df.iloc[:, df.columns.get_loc('job')].apply(lambda x: "Employed" if x in employed else "Unemployed")
+    
+    # Convert appropriate columns to category
+    cat_cols = ['job', 'marital', 'education', 'default', 'housing', 'contact', 'poutcome', target]
+    df[cat_cols] = df[cat_cols].astype('category')
+    
+    # Normalize numeric columns
+    numeric_cols = df.select_dtypes(include='int64').columns
+    scaler = preprocessing.MinMaxScaler()
+    df[numeric_cols] = scaler.fit_transform(df[numeric_cols])
+    
+    # One-hot encode categorical columns
+    encoded = pd.get_dummies(df[cat_cols])
+    df = df.drop(cat_cols, axis=1).join(encoded)
+    
+    # Split data into train, test, and validation sets
+    train, test = train_test_split(df, test_size=test_size, stratify=df[f'{target}_1'], random_state=random_state)
+    test, val = train_test_split(test, test_size=val_size, stratify=test[f'{target}_1'], random_state=random_state)
+    
+    return train, test, val
+# Usage
+train, test, val = clean_and_split_data(bank_data, 'signed up')
+
 #%%
 # now, let's train the classifier for k=9
 import random
 random.seed(1984)   # kNN is a random algorithm, so we use `random.seed(x)` to make results repeatable
 
-X_train = train.drop(['signed up_1','signed up_0'], axis=1)
+X_train = train.drop(['signed up_1'], axis=1)
 y_train = train['signed up_1'].values
 
 neigh = KNeighborsClassifier(n_neighbors=9)
@@ -132,8 +160,8 @@ X_train = train.drop(['signed up_1'], axis=1)
 y_train = train['signed up_1'].values
 
 #%%
-#train_accuracy = neigh.score(X_train, y_train)
-#print(f"Training Accuracy: {train_accuracy}")
+train_accuracy = neigh.score(X_train, y_train)
+print(f"Training Accuracy: {train_accuracy}")
 
 #%%
 # now, we check the model's accuracy on the test data:
@@ -201,7 +229,7 @@ test = pd.DataFrame({'k':list(range(1,22,2)),
                      'accu':[chooseK(i, X_train, y_train, X_test, y_test) for i in list(range(1, 22, 2))]})
 
 #%%
-print(test.head())
+print(test)
 
 #%%
 # Check for features that perfectly predict the 'signed up' variable
@@ -213,7 +241,7 @@ print(test.head())
 
 #%%
 test = test.sort_values(by=['accu'], ascending=False)
-print(test.head())
+print(test)
 
 #%%
 # From here, we see that the best value of k is at the top of the df!
@@ -290,7 +318,7 @@ confusion_matrix(final_model.actual_class, final_model.pred_class)   # original 
 #%%
 adjust_thres(final_model.pred_prob, .90, final_model.actual_class)   # raise threshold 
 #%%
-adjust_thres(final_model.pred_prob, .3, final_model.actual_class)   # lower threshold
+adjust_thres(final_model.pred_prob, .5, final_model.actual_class)   # lower threshold
 
 #%%
 # -------- More for next week: Model evaluation --------
@@ -314,6 +342,8 @@ print(metrics.f1_score(y_test, final_model.pred_class))
 # ----- Log Loss -----
 print(metrics.log_loss(y_test, final_model.pred_class))
 
+
+########################################################## STOP HERE ####################################################
 #%%
 # -------- Another quick example! --------
 from pydataset import data

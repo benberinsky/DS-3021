@@ -11,7 +11,8 @@ from sklearn.model_selection import train_test_split,GridSearchCV,RepeatedStrati
 from sklearn import metrics
 from sklearn.metrics import ConfusionMatrixDisplay
 from sklearn.preprocessing import OrdinalEncoder
-from sklearn.tree import DecisionTreeClassifier, export_graphviz 
+#from sklearn.tree import DecisionTreeClassifier, export_graphviz 
+from sklearn.tree import plot_tree
 
 # %% [markdown]
 # ### CART Example using Sklearn: Use a new Dataset, complete preprocessing, use three data
@@ -67,8 +68,8 @@ print(203/(1279+203)) #of excellent
 # %%
 #Before we start move forward, we have one more preprocessing step
 #We must encode text_rank to become a continuous variable as that is the only type sklearn decision trees can currently take
-#winequality[["text_rank"]] = OrdinalEncoder().fit_transform(winequality[["text_rank"]])
-#print(winequality["text_rank"].value_counts()) #nice
+winequality[["text_rank"]] = OrdinalEncoder().fit_transform(winequality[["text_rank"]])
+print(winequality["text_rank"].value_counts()) #nice
 
 # %% [markdown]
 # ## Splitting the Data

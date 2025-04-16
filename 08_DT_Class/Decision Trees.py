@@ -11,7 +11,7 @@ from sklearn.model_selection import train_test_split,GridSearchCV,RepeatedStrati
 from sklearn import metrics
 from sklearn.metrics import ConfusionMatrixDisplay
 from sklearn.preprocessing import OrdinalEncoder
-#from sklearn.tree import plot_tree, DecisionTreeClassifier, export_graphviz
+from sklearn.tree import plot_tree, DecisionTreeClassifier, export_graphviz
 from sklearn.tree import plot_tree
 
 # %% [markdown]
@@ -182,10 +182,10 @@ param={"max_depth" : [1,2,3,4,5,6,7,8,9,10,11],
 #Step 3: Train the Model
 
 #Classifier model we will use
-cl= DecisionTreeClassifier(random_state=1000)
+cl= DecisionTreeClassifier(random_state=1000, criterion= 'gini')
 
 #Set up search for best decisiontreeclassifier estimator across all of our folds based on roc_auc
-search = GridSearchCV(cl, param, scoring=scoring, n_jobs=1, cv=kf,refit='roc_auc')
+search = GridSearchCV(cl, param, scoring=scoring, n_jobs=1, cv=kf,refit='roc_auc', verbose = 3)
 
 
 #%%

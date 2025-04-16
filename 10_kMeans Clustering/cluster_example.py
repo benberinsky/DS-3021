@@ -14,11 +14,11 @@ from sklearn.metrics import confusion_matrix
 import os
 os.listdir()
 #print(os.getcwd())
-os.chdir('c:\\Users\\Brian Wright\\Documents\\3001Python\\DS-3001')
+#os.chdir('c:\\Users\\Brian Wright\\Documents\\3001Python\\DS-3001')
 #%%
 # Load Data
-house_votes_Dem = pd.read_csv("data/house_votes_Dem.csv", encoding='latin')
-house_votes_Rep = pd.read_csv("data/house_votes_Rep.csv")
+house_votes_Dem = pd.read_csv("../data/house_votes_Dem.csv", encoding='latin')
+house_votes_Rep = pd.read_csv("../data/house_votes_Rep.csv")
 #%%
 #Let's take a look at the data
 print(house_votes_Dem.head())
